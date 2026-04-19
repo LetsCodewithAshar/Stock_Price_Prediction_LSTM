@@ -3,3 +3,5 @@ __pycache__/
 .ipynb_checkpoints/
 *.pkl
 *.h5
+!scaler.pkl
+!lstm_model.h5
