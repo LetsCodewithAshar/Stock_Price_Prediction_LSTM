@@ -19,7 +19,7 @@ scaler = pickle.load(open('scaler.pkl', 'rb'))
 # -------------------------------
 # Page Config
 # -------------------------------
-st.set_page_config(page_title="Stock Predictor", page_icon="📈", layout="wide")
+st.set_page_config(page_title="Stock Predictor", page_icon="📈", layout="wide", initial_sidebar_state="expanded")
 
 # -------------------------------
 # Custom CSS — Premium Dark Theme
@@ -37,6 +37,19 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+
+    /* Hide sidebar collapse button — sidebar stays permanently open */
+    [data-testid="collapseSidebarButton"],
+    [data-testid="stSidebarCollapseButton"] {
+        display: none !important;
+    }
+
+    /* Force sidebar always visible and open */
+    section[data-testid="stSidebar"] {
+        transform: translateX(0px) !important;
+        min-width: 244px !important;
+        visibility: visible !important;
+    }
 
     /* Hero Banner */
     .hero-banner {
@@ -165,7 +178,7 @@ st.markdown("""
     .trend-card {
         background: linear-gradient(145deg, #1A1F2E, #151922);
         border-radius: 16px;
-        padding: 2rem;
+        padding: 2rem;s
         height: 100%;
         border: 1px solid rgba(255,255,255,0.05);
     }
@@ -318,6 +331,31 @@ st.markdown("""
 # -------------------------------
 # Sidebar
 # -------------------------------
+
+# Force sidebar open — clears any collapsed browser state
+st.markdown("""
+<script>
+(function() {
+    // Clear any stored collapsed state in localStorage
+    try {
+        Object.keys(localStorage).forEach(function(key) {
+            if (key.includes('sidebar') || key.includes('Sidebar')) {
+                localStorage.removeItem(key);
+            }
+        });
+    } catch(e) {}
+    // If sidebar is collapsed, click the expand button
+    function openSidebar() {
+        var btn = document.querySelector('[data-testid="stSidebarCollapsedControl"] button') ||
+                  document.querySelector('[data-testid="collapsedControl"] button');
+        if (btn) { btn.click(); }
+    }
+    setTimeout(openSidebar, 500);
+    setTimeout(openSidebar, 1500);
+})();
+</script>
+""", unsafe_allow_html=True)
+
 with st.sidebar:
     st.markdown("""
     <div style="text-align:center; margin-bottom:1.5rem;">
