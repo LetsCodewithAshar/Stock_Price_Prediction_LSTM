@@ -1,4 +1,4 @@
-import streamlit as st
+﻿import streamlit as st
 import numpy as np
 import pandas as pd
 import yfinance as yf
@@ -438,8 +438,17 @@ if "stock_info" not in st.session_state:
 if predict_btn:
     with st.spinner("🔄 Fetching market data & running LSTM prediction..."):
         df = yf.download(stock_symbol, start=start_date, end=end_date)
+
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = df.columns.get_level_values(0)
+
+        if "Close" in df.columns:
+            df = df.dropna(subset=["Close"]).copy()
+
         if df.empty:
-            st.error("❌ No data found for this stock symbol. Try another one (e.g., INFY.NS, TCS.NS).")
+            st.error("❌ No valid closing-price data found for this stock symbol in the selected range.")
+        elif len(df) < 60:
+            st.error("❌ Not enough valid data points after cleanup. Please choose a wider date range.")
         else:
             st.session_state.df = df
 
